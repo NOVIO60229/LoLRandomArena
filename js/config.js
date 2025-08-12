@@ -3,7 +3,7 @@ export let imageVersion = null;
 
 // 讀取版本設定（或從 config json 讀取）
 export async function loadConfig() {
-  const configResponse = await fetch(`asset/dragontail-config.json`);
+  const configResponse = await fetch(`/manifest.json`);
   const config = await configResponse.json();
   spriteBasePath = config.spriteBasePath;
 
