@@ -1,0 +1,43 @@
+name: DDragon auto-update
+
+on:
+  schedule:
+    - cron: "0 */12 * * *" 
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ddragon-update
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Run updater
+        run: |
+          node scripts/check_and_update.js
+
+      - name: Commit changes if any
+        run: |
+          if [[ -n "$(git status --porcelain)" ]]; then
+            git config user.name  "OLDMAN"
+            git config user.email "h0048625@gmail.com"
+            ver=$(cat data/latest.txt 2>/dev/null || echo "update")
+            git add -A
+            git commit -m "Update DDragon to ${ver}"
+            git push
+          else
+            echo "No changes to commit."
+          fi
+
