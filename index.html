@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+
+<head>
+    <meta charset="UTF-8">
+    <title>LOL RandomArena</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+    <label for="mapSelect">選擇模式：</label>
+    <select id="mapSelect">
+        <option value="12">咆哮深淵</option>
+        <option value="11">召喚峽谷</option>
+        <option value="30">競技場</option>
+    </select>
+
+    <label for="characterCount">人數：</label>
+    <input type="number" id="characterCount" value="12" min="1" max="10" style="width: 50px;">
+
+    <label>
+        <input type="checkbox" id="guaranteedFlashToggle" checked>
+        一定有閃
+    </label>
+    <label>
+        <input type="checkbox" id="dFlashToggle" checked>
+        D閃
+    </label>
+
+    <label>
+        <input type="checkbox" id="toggleBanVisibility" checked>
+        顯示已禁用角色
+    </label>
+
+    <button id="drawButton">抽選</button>
+
+
+    <div class="lobby">
+        <div class="blueSide" id="blueSide"></div>
+        <div class="characterGroupPool" id="characterGroupPool"></div>
+        <div class="redSide" id="redSide"></div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+
+</html>

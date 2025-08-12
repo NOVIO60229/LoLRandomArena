@@ -1,0 +1,119 @@
+#champion {
+  display: flex;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.championIcon,
+.itemIcon {
+  width: 48px;
+  height: 48px;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+}
+
+.spellIcon,
+.runeIcon {
+  width: 48px;
+  height: 48px;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+  background-size: contain;
+  image-rendering: auto;
+}
+
+.lobby {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+  background-color: #2b2b3d;
+}
+
+.blueSide {
+  background-color: #2b4a8b;
+}
+
+.redSide {
+  background-color: #8b2b2b;
+}
+
+.characterGroupPool {
+  background-color: #2b2b3d;
+}
+
+.redSide.drag-over,
+.blueSide.drag-over {
+  outline: 2px dashed white;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.redSide, .blueSide, .characterGroupPool {
+  display: flex;
+  flex-direction: row;      /* 橫向排列 */
+  flex-wrap: wrap;          /* 自動換行 */
+  gap: 16px;
+  margin: 8px;
+  background-repeat: no-repeat;
+  background-size: cover;
+  flex: 1;
+  justify-content: center;
+}
+
+/* 每個子元素強制固定寬度以形成兩欄 */
+.redSide > *, .blueSide > *, .characterGroupPool > * {
+  width: 45%;   /* 或用 50% - gap 作調整 */
+  box-sizing: border-box;
+}
+
+.characterGroup {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;  
+  gap: 16px;
+  background-color: #1e1e2f;
+  padding: 8px;
+  margin: 8px;
+  border-radius: 8px;
+
+  width: 350px;   /* 自行調整 */
+  height: 150px;  /* 自行調整 */
+  box-sizing: border-box; /* 確保 padding 不會撐大尺寸 */
+  overflow: auto; /* 可選：內容太多時可滾動 */
+}
+.upperSection, .lowerSection {
+  display: flex;
+  flex-direction: row; /* 預設其實就是 row，也可以省略 */
+  justify-content: center;
+  gap: 8px;
+}
+
+.banButton {
+  align-self: "center";
+  background-color: #444;
+  color: #fff;
+  border: none;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+
+.characterGroup.banned {
+  position: relative;
+  pointer-events: none;
+  opacity: 0.5;
+}
+
+.characterGroup.banned::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  z-index: 10;
+}
+
+body {
+  background-color: #1e1e2f;
+  color: #e0e0e0;
+}
