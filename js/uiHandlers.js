@@ -85,14 +85,21 @@ function renderGroups(groups, selectedMap) {
 
     // TODO:刷新ban view
     banButton.addEventListener("click", () => {
+      const showBanned = document.getElementById("toggleBanVisibility")?.checked ?? true;
       groupDiv.classList.add("banned");
+      updateBannedItemVisibility(groupDiv,showBanned );
     });
-    lowerDiv.appendChild(banButton);
 
+    lowerDiv.appendChild(banButton);
     groupDiv.appendChild(upperDiv);
     groupDiv.appendChild(lowerDiv);
     characterGroupPool.appendChild(groupDiv);
   });
+}
+
+function refreshPage()
+{
+
 }
 
 // 綁定拖放事件
@@ -144,7 +151,12 @@ export function bindToggleBanVisibility() {
     const showBanned = this.checked;
     const bannedItems = document.querySelectorAll(".characterGroup.banned");
     bannedItems.forEach(item => {
-      item.style.display = showBanned ? "flex" : "none";
+      updateBannedItemVisibility(item,showBanned);
     });
   });
+}
+
+function updateBannedItemVisibility(groupEl, showBanned) {
+  if (!(groupEl instanceof HTMLElement)) return;
+  groupEl.style.display = showBanned ? "flex" : "none";
 }
