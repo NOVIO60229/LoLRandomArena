@@ -1,6 +1,5 @@
 {
   "spriteBasePath": "asset/dragontail",
-  "version": "15.10.1",
+  "versionTxtPath": "data/latest.txt",
   "auto_update_to_latest": true
-
 }
