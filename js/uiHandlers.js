@@ -1,14 +1,15 @@
-import { generateRandomCharacters, mapIdToName } from './randomizer.js';
+import { generateRandomCharacters } from './randomizer.js';
 import { spriteBasePath, imageVersion } from './config.js';
-import { spellList } from './dataLoader.js';
 
 export function bindDrawButton() {
   document.getElementById("drawButton").addEventListener("click", () => {
     try {
       const selectedMap = document.getElementById("mapSelect").value;
       const characterCount = parseInt(document.getElementById("characterCount").value, 10);
+      const dFlashEnabled = document.getElementById("dFlashToggle").checked;
+      const guaranteedFlash = document.getElementById("guaranteedFlashToggle").checked;
 
-      const groups = generateRandomCharacters(selectedMap, characterCount);
+      const groups = generateRandomCharacters(selectedMap, characterCount,dFlashEnabled, guaranteedFlash);
 
       renderGroups(groups, selectedMap);
 
@@ -66,6 +67,15 @@ function renderGroups(groups, selectedMap) {
     runeDiv.style.backgroundImage = `url(${spriteBasePath}/img/${group.rune.icon})`;
     runeDiv.style.backgroundPosition = "center";
     lowerDiv.appendChild(runeDiv);
+
+    //召喚師技能
+    for (const spell of group.spells) {
+      const spellDiv = document.createElement("div");
+      spellDiv.className = "spellIcon";
+      spellDiv.style.backgroundImage = `url(${spriteBasePath}/${imageVersion}/img/spell/${spell.image.full})`;
+      spellDiv.style.backgroundPosition = "center";
+      lowerDiv.appendChild(spellDiv);
+    }
 
 
     // ban 按鈕
