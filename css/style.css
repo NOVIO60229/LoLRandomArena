@@ -87,12 +87,37 @@
   gap: 8px;
 }
 
+.leftSection {
+  flex: 0 0 20%;
+  max-width: 20%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.rightSection {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
 .banButton {
   align-self: "center";
   background-color: #444;
   color: #fff;
   border: none;
-  padding: 4px 8px;
+  width: 48px;
+  height: 48px;
+  cursor: pointer;
+}
+.rerollButton {
+  align-self: "center";
+  background-color: #444;
+  color: #fff;
+  border: none;
+  width: 48px;
+  height: 48px;
   cursor: pointer;
 }
 

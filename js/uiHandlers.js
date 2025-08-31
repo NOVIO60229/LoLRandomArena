@@ -1,4 +1,4 @@
-import { generateRandomCharacters } from './randomizer.js';
+import { generateRandomGroups, regenerateGroupAtIndex } from './randomizer.js';
 import { spriteBasePath, imageVersion } from './config.js';
 
 export function bindDrawButton() {
@@ -9,7 +9,7 @@ export function bindDrawButton() {
       const dFlashEnabled = document.getElementById("dFlashToggle").checked;
       const guaranteedFlash = document.getElementById("guaranteedFlashToggle").checked;
 
-      const groups = generateRandomCharacters(selectedMap, characterCount,dFlashEnabled, guaranteedFlash);
+      const groups = generateRandomGroups(selectedMap, characterCount,dFlashEnabled, guaranteedFlash);
 
       renderGroups(groups, selectedMap);
 
@@ -36,6 +36,14 @@ function renderGroups(groups, selectedMap) {
     groupDiv.addEventListener("dragstart", e => {
       e.dataTransfer.setData("text/plain", groupDiv.id);
     });
+
+    //左邊功能按鈕攔
+    const leftDiv = document.createElement("div");
+    leftDiv.className = "leftSection";
+
+    //右邊其他
+    const rightDiv = document.createElement("div");
+    rightDiv.className = "rightSection";
 
     // 上半部：英雄 + 裝備 + 符文
     const upperDiv = document.createElement("div");
@@ -77,30 +85,39 @@ function renderGroups(groups, selectedMap) {
       lowerDiv.appendChild(spellDiv);
     }
 
-
     // ban 按鈕
     const banButton = document.createElement("button");
     banButton.className = "banButton";
     banButton.textContent = "禁用";
 
-    // TODO:刷新ban view
+    // bind  ban 按鈕
     banButton.addEventListener("click", () => {
       const showBanned = document.getElementById("toggleBanVisibility")?.checked ?? true;
       groupDiv.classList.add("banned");
       updateBannedItemVisibility(groupDiv,showBanned );
     });
 
-    lowerDiv.appendChild(banButton);
-    groupDiv.appendChild(upperDiv);
-    groupDiv.appendChild(lowerDiv);
+    //reroll 按鈕
+    const rerollButton = document.createElement("button");
+    rerollButton.className = "rerollButton";
+    rerollButton.textContent = "重抽";
+
+    //bind reroll 按鈕
+    rerollButton.addEventListener("click", () => {
+      let groups = regenerateGroupAtIndex(index)
+      renderGroups(groups,selectedMap);
+    });
+
+    leftDiv.appendChild(banButton);
+    leftDiv.appendChild(rerollButton);
+    rightDiv.appendChild(upperDiv);
+    rightDiv.appendChild(lowerDiv);
+    groupDiv.appendChild(leftDiv);
+    groupDiv.appendChild(rightDiv);
     characterGroupPool.appendChild(groupDiv);
   });
 }
 
-function refreshPage()
-{
-
-}
 
 // 綁定拖放事件
 export function bindDragAndDrop() {

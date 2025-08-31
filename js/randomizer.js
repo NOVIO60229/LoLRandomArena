@@ -7,24 +7,27 @@ export const mapIdToName = {
   30: "CHERRY"
 };
 
-export function generateRandomCharacters(mapId, characterCount, dFlashEnabled, guaranteedFlash) {
+let lastGroups = [];
+let remainingChampions;
+let remainingItems;
+
+export function generateRandomGroups(mapId, characterCount, dFlashEnabled, guaranteedFlash) {
   if (characterCount > championList.length) {
     throw new Error("組數超過可用英雄數量！");
   }
 
-  // 隨機排序
-  let remainingChampions = [...championList].sort(() => 0.5 - Math.random());
-
-  // 抽選英雄
   let groups = [];
+
+  // 隨機排序
+  remainingChampions = [...championList].sort(() => 0.5 - Math.random());
+  remainingItems = [...itemList].filter(item => item.maps && item.maps[mapId] === true);
+  
+  // 抽選英雄
   for (let g = 0; g < characterCount; g++) {
     const champion = remainingChampions.splice(0, 1)[0];
 
     // 裝備篩選
-    const items = [...itemList]
-      .filter(item => item.maps && item.maps[mapId] === true)
-      .sort(() => 0.5 - Math.random())
-      .slice(0, 2);
+    const items = remainingItems.sort(() => 0.5 - Math.random()).slice(0, 2);
 
     // 符文抽取
     const primary = runeList[Math.floor(Math.random() * runeList.length)];
@@ -56,7 +59,6 @@ export function generateRandomCharacters(mapId, characterCount, dFlashEnabled, g
       }
     }
 
-
     groups.push({
       champion,
       items,
@@ -65,5 +67,19 @@ export function generateRandomCharacters(mapId, characterCount, dFlashEnabled, g
     });
   }
 
+  lastGroups = groups;
   return groups;
+}
+
+export function regenerateGroupAtIndex(index)
+{
+  if (index < 0 || index >= lastGroups.length) throw new Error(' regenerateGroupAtIndex | index out of range');
+
+  const champion = remainingChampions.splice(0, 1)[0];
+  const items = remainingItems.sort(() => 0.5 - Math.random()).slice(0, 2);
+
+  lastGroups[index].champion = champion;
+  lastGroups[index].items = items;
+
+  return lastGroups;
 }
