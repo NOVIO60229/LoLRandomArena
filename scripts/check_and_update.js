@@ -6,7 +6,6 @@ import { promisify } from 'node:util';
 const exec = promisify(execCb);
 
 
-const LANG_CODE = process.env.DDRAGON_LANG || "zh_TW"; // 語系
 const ASSET_DIR = "asset/dragontail"; //dragontail 資料位置
 const ASSET_DIR_TEMP = "asset/.tarTemp" //dragontail temp解壓位置
 const VERSION_TXT_DIR = "data";   //版本號txt資料夾
