@@ -10,6 +10,7 @@ export const mapIdToName = {
 let lastGroups = [];
 let remainingChampions;
 let remainingItems;
+let remainingChampionsForSingleShuffle;
 
 export function generateRandomGroups(mapId, characterCount, dFlashEnabled, guaranteedFlash) {
   if (characterCount > championList.length) {
@@ -24,7 +25,7 @@ export function generateRandomGroups(mapId, characterCount, dFlashEnabled, guara
   
   // 抽選英雄
   for (let g = 0; g < characterCount; g++) {
-    const champion = remainingChampions.splice(0, 1)[0];
+    const champion = remainingChampions.pop();
 
     // 裝備篩選
     const items = remainingItems.sort(() => 0.5 - Math.random()).slice(0, 2);
@@ -68,6 +69,9 @@ export function generateRandomGroups(mapId, characterCount, dFlashEnabled, guara
   }
 
   lastGroups = groups;
+  remainingChampionsForSingleShuffle = remainingChampions.slice();
+
+
   return groups;
 }
 
@@ -75,7 +79,11 @@ export function regenerateGroupAtIndex(index)
 {
   if (index < 0 || index >= lastGroups.length) throw new Error(' regenerateGroupAtIndex | index out of range');
 
-  const champion = remainingChampions.splice(0, 1)[0];
+  if(remainingChampionsForSingleShuffle.length < 1) 
+  {
+    remainingChampionsForSingleShuffle = remainingChampions.slice();
+  }
+  const champion = remainingChampionsForSingleShuffle.pop();
   const items = remainingItems.sort(() => 0.5 - Math.random()).slice(0, 2);
 
   lastGroups[index].champion = champion;
