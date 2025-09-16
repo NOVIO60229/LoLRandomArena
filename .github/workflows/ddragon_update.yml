@@ -48,6 +48,5 @@ jobs:
   deploy_if_changed:
     needs: update
     if: ${{ needs.update.outputs.changed == 'true' }}   
-    runs-on: ubuntu-latest
     uses: ./.github/workflows/static.yml               # ← 直接呼叫 static.yml
 
