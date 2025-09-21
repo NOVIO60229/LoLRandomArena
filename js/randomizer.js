@@ -9,8 +9,7 @@ export const mapIdToName = {
 
 let lastGroups = [];
 let remainingChampions;
-let remainingItems;
-let remainingChampionsForSingleShuffle;
+let itemPool;
 
 export function generateRandomGroups(mapId, characterCount, dFlashEnabled, guaranteedFlash) {
   if (characterCount > championList.length) {
@@ -19,46 +18,24 @@ export function generateRandomGroups(mapId, characterCount, dFlashEnabled, guara
 
   let groups = [];
 
-  // 隨機排序
+  // 英雄隨機排序
   remainingChampions = [...championList].sort(() => 0.5 - Math.random());
-  remainingItems = [...itemList].filter(item => item.maps && item.maps[mapId] === true);
-  
+  //裝備隨機排序
+  itemPool = [...itemList].filter(item => item.maps && item.maps[mapId] === true);
+
   // 抽選英雄
   for (let g = 0; g < characterCount; g++) {
-    const champion = remainingChampions.pop();
+    const champion = remainingChampions.shift();
 
     // 裝備篩選
-    const items = remainingItems.sort(() => 0.5 - Math.random()).slice(0, 2);
+    const items = copyRandomFromPool(itemPool, 2);
 
     // 符文抽取
     const primary = runeList[Math.floor(Math.random() * runeList.length)];
     const rune = primary.slots[0].runes[Math.floor(Math.random() * primary.slots[0].runes.length)];
 
     // 抽召喚師技能
-    const mapName = mapIdToName[mapId] || "ARAM";
-
-
-    const flashSpell = spellList.find(spell => spell.id === "SummonerFlash");
-    // 過濾地圖可用，並移除 flash，用來手動插入
-    const filteredSpells = [...spellList].filter(spell => spell.modes && spell.modes.includes(mapName)).filter(spell => spell.id !== "SummonerFlash");
-    let spells = [];
-
-    if (guaranteedFlash && flashSpell) {
-      const otherSpell = filteredSpells.sort(() => 0.5 - Math.random())[0];
-      spells = dFlashEnabled ? [flashSpell, otherSpell] : [otherSpell, flashSpell];
-    }
-    else {
-      spells = [...filteredSpells, flashSpell]
-        .filter(Boolean)
-        .sort(() => 0.5 - Math.random())
-        .slice(0, 2);
-
-      // 如果抽到 flash，就根據 D Flash 決定順序
-      const hasFlash = spells.some(spell => spell.id === "SummonerFlash");
-      if (hasFlash && dFlashEnabled) {
-        spells.sort((a, b) => (a.id === "SummonerFlash" ? -1 : 1));
-      }
-    }
+    let spells = rollSpells(mapId, guaranteedFlash, dFlashEnabled);
 
     groups.push({
       champion,
@@ -69,25 +46,66 @@ export function generateRandomGroups(mapId, characterCount, dFlashEnabled, guara
   }
 
   lastGroups = groups;
-  remainingChampionsForSingleShuffle = remainingChampions.slice();
-
 
   return groups;
 }
 
-export function regenerateGroupAtIndex(index)
-{
+function rollSpells(mapId, guaranteedFlash, dFlashEnabled) {
+  const mapName = mapIdToName[mapId] || "ARAM";
+  const flashSpell = spellList.find(spell => spell.id === "SummonerFlash");
+  // 過濾地圖可用，並移除 flash，用來手動插入
+  const filteredSpells = [...spellList].filter(spell => spell.modes && spell.modes.includes(mapName)).filter(spell => spell.id !== "SummonerFlash");
+  let spells = [];
+
+  if (guaranteedFlash && flashSpell) {
+    const otherSpell = filteredSpells.sort(() => 0.5 - Math.random())[0];
+    spells = dFlashEnabled ? [flashSpell, otherSpell] : [otherSpell, flashSpell];
+  }
+  else {
+    spells = [...filteredSpells, flashSpell]
+      .filter(Boolean)
+      .sort(() => 0.5 - Math.random())
+      .slice(0, 2);
+
+    // 如果抽到 flash，就根據 D Flash 決定順序
+    const hasFlash = spells.some(spell => spell.id === "SummonerFlash");
+    if (hasFlash && dFlashEnabled) {
+      spells.sort((a, b) => (a.id === "SummonerFlash" ? -1 : 1));
+    }
+  }
+  return spells;
+}
+
+export function regenerateGroupAtIndex(index, mapId, guaranteedFlash, dFlashEnabled) {
   if (index < 0 || index >= lastGroups.length) throw new Error(' regenerateGroupAtIndex | index out of range');
 
-  if(remainingChampionsForSingleShuffle.length < 1) 
-  {
-    remainingChampionsForSingleShuffle = remainingChampions.slice();
-  }
-  const champion = remainingChampionsForSingleShuffle.pop();
-  const items = remainingItems.sort(() => 0.5 - Math.random()).slice(0, 2);
+  const newChampion = remainingChampions.shift();
+  remainingChampions.push(lastGroups[index].champion);
 
-  lastGroups[index].champion = champion;
+  const items = copyRandomFromPool(itemPool, 2);
+
+  const primary = runeList[Math.floor(Math.random() * runeList.length)];
+  const rune = primary.slots[0].runes[Math.floor(Math.random() * primary.slots[0].runes.length)];
+
+  const spells = rollSpells(mapId, guaranteedFlash, dFlashEnabled);
+
+  lastGroups[index].champion = newChampion;
   lastGroups[index].items = items;
+  lastGroups[index].rune = rune;
+  lastGroups[index].spells = spells;
 
-  return lastGroups;
+  return lastGroups[index];
+}
+
+function copyRandomFromPool(pool, n) {
+  const copy = [...pool];
+  const result = [];
+
+  for (let i = 0; i < n && copy.length > 0; i++) {
+    const idx = Math.floor(Math.random() * copy.length);
+    result.push(copy[idx]);
+    copy.splice(idx, 1);
+  }
+
+  return result;
 }
